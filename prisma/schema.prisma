@@ -12,3 +12,48 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  id        String    @id @default(uuid())
+  firstName String    @db.VarChar(80)
+  lastName  String?   @db.VarChar(100)
+  email     String    @unique @db.VarChar(80)
+  password  String    @db.VarChar(255)
+  birthDate DateTime  @db.Date
+  state     Boolean   @default(false)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt @db.Timestamp(6)
+  otbs      Otb[]
+  sessions  Session[]
+  posts     Post[]
+}
+
+model Otb {
+  id      String @id @default(uuid())
+  userOtb User   @relation(fields: [userId], references: [id])
+  userId  String
+  token   Int
+}
+
+model Session {
+  id          String   @id @default(uuid())
+  userId      String
+  userSession User     @relation(fields: [userId], references: [id])
+  token       String
+  isEnabled   Boolean  @default(true)
+  lifetime    Int
+  timeOut     DateTime
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @db.Timestamp(6)
+}
+
+model Post {
+  id        String   @id @default(uuid())
+  userId    String
+  userPost  User     @relation(fields: [userId], references: [id])
+  title     String   @db.VarChar(80)
+  content   String   @db.Text
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  updatedAt DateTime @updatedAt @db.Timestamp(6)
+}
