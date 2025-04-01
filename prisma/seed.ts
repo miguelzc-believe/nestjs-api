@@ -31,7 +31,7 @@ async function generateDate()
             await prisma.post.create({
               data: {
                 userId: u.id,
-                title: faker.lorem.sentence({min:3,max:70}),
+                title: faker.lorem.sentence({min:1,max:3}),
                 content: faker.lorem.paragraphs({min:10,max:200}),
                 isDeleted: false
               }
