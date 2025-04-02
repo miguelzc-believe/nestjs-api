@@ -5,6 +5,5 @@ export class SignInDto {
   email: string;
 
   @IsNotEmpty({ message: 'Password should not be empty' })
-  @MinLength(8, { message: 'Password should be at least 8 characters long' })
   password: string;
 }

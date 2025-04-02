@@ -13,6 +13,8 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { SignInDto } from './dto/signInDto';
+import { CurrentUser } from './decorators/current-user.decorator';
+import { JwtPayload } from './dto/jwt-payload.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +28,7 @@ export class AuthController {
 
   @UseGuards(AuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
+  getProfile(@CurrentUser() user:JwtPayload) {
+    return user
   }
 }
