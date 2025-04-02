@@ -14,10 +14,7 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
-import { AuthGuard } from 'src/auth/auth.guard';
 import { PaginationPostDto } from './dto/pagination-post.dto';
-
-@UseGuards(AuthGuard)
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}

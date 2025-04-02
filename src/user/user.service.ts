@@ -25,7 +25,7 @@ export class UserService {
         lastName: createUserDto.lastName,
         email: createUserDto.email,
         password: encryptedPassword,
-        state: true,
+        state: false,
         birthDate,
       }
     });

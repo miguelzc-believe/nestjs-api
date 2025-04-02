@@ -25,7 +25,6 @@ export class AuthController {
     return this.authService.signIn(signInDto);
   }
 
-  @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@CurrentUser() user:JwtPayload) {
     return user

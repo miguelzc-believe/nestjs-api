@@ -1,14 +1,9 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
-import { UserService } from 'src/user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { SignInDto } from './dto/signInDto';
 import { randomUUID } from 'crypto';
-import { generateJWT } from './utils/authUtils';
 import { SessionService } from 'src/session/session.service';
-import { CreateSessionDto } from 'src/session/dto/create-session.dto';
-import { SmtpService } from 'src/smtp/smtp.service';
+import { SharedUserService } from 'src/shared-user/shared-user.service';
 const bcrypt = require('bcrypt');
 
 @Injectable()
@@ -16,13 +11,16 @@ export class AuthService {
   constructor(
     private jwtService: JwtService,
     
-    private readonly smtpService: SmtpService,
+    private readonly sharedUserService: SharedUserService,
     private readonly sessionService: SessionService,
   ) {}
   async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
-    const user = await this.smtpService.findUserByEmail(signInDto.email);
+    const user = await this.sharedUserService.findUserByEmail(signInDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
+    }
+    if(!user.state) {
+      throw new UnauthorizedException('User not activated');
     }
     const pass = await bcrypt.compare(signInDto.password, user.password);
     if (!pass) {

@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 import { OtbService } from './otb.service';
 import { OtbController } from './otb.controller';
 import { PrismaModule } from 'src/prisma/prisma.module';
-import { SmtpModule } from 'src/smtp/smtp.module';
+import { SharedUserModule } from 'src/shared-user/shared-user.module';
 
 @Module({
-  imports: [PrismaModule,SmtpModule],
+  imports: [PrismaModule,SharedUserModule],
   controllers: [OtbController],
   providers: [OtbService],
   exports: [OtbService],
