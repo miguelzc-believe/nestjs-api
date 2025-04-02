@@ -30,7 +30,7 @@ export class AuthController {
   getProfile(@CurrentUser() user:JwtPayload) {
     return user
   }
-  @UseGuards(AuthGuard)
+
   @Post('logout')
   async logout (@CurrentUser() user:JwtPayload){
     await this.sessionService.updateSessionById(user.sessionId)
