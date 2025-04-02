@@ -1,15 +1,20 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { OtbService } from 'src/otb/otb.service';
-import { th } from '@faker-js/faker/.';
 import { generateTokenOtb } from 'src/auth/utils/authUtils';
 import { SmtpService } from 'src/smtp/smtp.service';
+import { UpdateUserPasswordDto } from './dto/update-user-password';
+import { SessionService } from 'src/session/session.service';
+import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 const bcrypt = require('bcrypt');
 @Injectable()
 export class UserService {
-  constructor(private readonly dbClient: PrismaService,private readonly otbService:OtbService, private readonly smtService:SmtpService) {}
+  constructor(private readonly dbClient: PrismaService,
+    private readonly otbService:OtbService, 
+    private readonly smtService:SmtpService,
+    private readonly sessionService:SessionService) {}
   findUserByEmail(email: string) {
     return this.dbClient.user.findUnique({
       where:{
@@ -38,19 +43,62 @@ export class UserService {
   }
 
   findAll() {
-    return `This action returns all user`;
+    return this.dbClient.user.findMany({
+      where: { state: true },
+      select: {
+        firstName: true,
+        lastName: true, 
+        email: true,
+        birthDate: true,
+      }});
   }
 
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  findOne(id: string) {
+    return this.dbClient.user.findUnique({
+      where: { id },
+      select: {
+        firstName: true,
+        lastName: true,
+        email: true,
+        birthDate: true,
+      }});
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    return `This action updates a #${id} user`;
+  update(id: string, updateUserDto: UpdateUserDto) {
+    if(updateUserDto.password || updateUserDto.passwordConfirmation) throw new BadRequestException("You cannot update the password here, please use the updatePassword method");
+    if(updateUserDto.birthDate) updateUserDto.birthDate= new Date(updateUserDto.birthDate);
+    return this.dbClient.user.update({
+      where: { id },
+      data: {
+        ...updateUserDto
+        },
+        select:{
+          firstName: true,
+          lastName: true,
+          email: true,
+          birthDate: true,
+        }
+        },);
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  remove(id: string) {
+    return this.dbClient.user.delete({
+      where: { id },
+    });
   }
+
+  async updatePassword(payload:JwtPayload,updateUserPasswordDto:UpdateUserPasswordDto) {
+    
+    const encryptedPassword = await bcrypt.hash(updateUserPasswordDto.newPassword, 10);
+    await this.dbClient.user.update({
+      where: { id: payload.userId },
+      data: {
+        password: encryptedPassword,
+      },
+    });
+    this.sessionService.closeAllSessions({userId: payload.userId, sessionId:payload.sessionId });
+    return "Password updated successfully";
+  }
+
 }
