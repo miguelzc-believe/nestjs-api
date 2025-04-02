@@ -32,4 +32,14 @@ export class SessionService {
       data: { isEnabled: false },
     });
   }
+  async updateSessionById(id: string) {
+    return this.dbClient.session.update({
+      where: {
+        id,
+      },
+      data: {
+        isEnabled: false,
+      },
+    });
+  }
 }

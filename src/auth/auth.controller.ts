@@ -13,10 +13,11 @@ import { SignInDto } from './dto/signInDto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtPayload } from './dto/jwt-payload.dto';
 import { Public } from './decorators/public.decorator';
+import { SessionService } from 'src/session/session.service';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(private readonly authService: AuthService, private readonly sessionService : SessionService) {}
 
   @Public()
   @HttpCode(HttpStatus.OK)
@@ -28,5 +29,11 @@ export class AuthController {
   @Get('profile')
   getProfile(@CurrentUser() user:JwtPayload) {
     return user
+  }
+
+  @Post('logout')
+  async logout (@CurrentUser() user:JwtPayload){
+    await this.sessionService.updateSessionById(user.sessionId)
+    return {'message': 'Logout successfully'}
   }
 }
