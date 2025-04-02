@@ -1,11 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { CreateOtbDto } from './dto/create-otb.dto';
 import { UpdateOtbDto } from './dto/update-otb.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class OtbService {
+  constructor(private readonly dbClient: PrismaService) {}
   create(createOtbDto: CreateOtbDto) {
-    return 'This action adds a new otb';
+    return this.dbClient.otb.create({
+      data: {
+        ...createOtbDto
+      }})
   }
 
   findAll() {
