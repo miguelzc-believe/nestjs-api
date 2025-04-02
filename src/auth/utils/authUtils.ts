@@ -1,18 +1,5 @@
-var CryptoJS = require('crypto-js')
-import nodemailer from 'nodemailer';
+const nodemailer = require('nodemailer');
 import jwt from 'jsonwebtoken'
-
-
-
-export const encryptPassword = async (password: string) => {
-  var hashedPassword = await CryptoJS.AES.encrypt(password, process.env.KEY).toString()
-  return hashedPassword
-}
-export const decryptPassword = async (password: string) => {
-  var bytes = CryptoJS.AES.decrypt(password,process.env.KEY);
-  var decryptedPassword = await bytes.toString(CryptoJS.enc.Utf8)
-  return decryptedPassword
-}
 
 export const generateTokenOtb = () => Math.floor(100000 + Math.random() * 900000).toString();
 
