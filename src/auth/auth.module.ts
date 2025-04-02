@@ -5,9 +5,11 @@ import { JwtModule } from '@nestjs/jwt';
 import { SessionModule } from 'src/session/session.module';
 import { AuthGuard } from './auth.guard';
 import { SharedUserModule } from 'src/shared-user/shared-user.module';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports: [
+    UserModule,
     SharedUserModule,
     SessionModule,
     JwtModule.register({
