@@ -4,11 +4,12 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { OtbService } from 'src/otb/otb.service';
 import { th } from '@faker-js/faker/.';
-import { generateTokenOtb, sendEmail } from 'src/auth/utils/authUtils';
+import { generateTokenOtb } from 'src/auth/utils/authUtils';
+import { SmtpService } from 'src/smtp/smtp.service';
 const bcrypt = require('bcrypt');
 @Injectable()
 export class UserService {
-  constructor(private readonly dbClient: PrismaService,private readonly otbService:OtbService) {}
+  constructor(private readonly dbClient: PrismaService,private readonly otbService:OtbService, private readonly smtService:SmtpService) {}
   findUserByEmail(email: string) {
     return this.dbClient.user.findUnique({
       where:{
@@ -32,7 +33,7 @@ export class UserService {
     if(!u) throw new Error("Error creating user");
     const t=generateTokenOtb()
     const otb= await this.otbService.create({userId:(await u).id,token:+t});
-    await sendEmail((await u).email,t);
+    await this.smtService.sendEmail({email: (await u).email,token:t});
     return "User created successfully, please check your email to confirm your account";
   }
 
