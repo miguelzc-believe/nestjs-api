@@ -15,6 +15,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import { PaginationPostDto } from './dto/pagination-post.dto';
+import { PostOwnerGuard } from './post.guard';
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -43,20 +44,22 @@ export class PostController {
     };
   }
   @Delete(':id')
-  async deletePostById(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
-    const post = await this.postService.deletePostById(id, user.userId);
+  @UseGuards(PostOwnerGuard)
+  async deletePostById(@Param('id') id: string) {
+    const post = await this.postService.deletePostById(id);
     return {
       message: 'Post deleted successfully',
       postId: post.id,
     };
   }
+
   @Patch(':id')
+  @UseGuards(PostOwnerGuard)
   async updatePostById(
     @Body() updatePostDto: UpdatePostDto,
     @Param('id') id: string,
-    @CurrentUser() user: JwtPayload,
   ) {
-    await this.postService.updatePostById(id, user.userId, updatePostDto);
+    await this.postService.updatePostById(id, updatePostDto);
     return {
       message: 'Post updated successfully',
     };

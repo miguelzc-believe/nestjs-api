@@ -36,26 +36,20 @@ export class PostService {
       },
     });
   }
-  async deletePostById(id: string, userId: string) {
+  async deletePostById(id: string) {
     return this.dbClient.post.update({
       where: {
         id,
-        userId,
       },
       data: {
         isDeleted: true,
       },
     });
   }
-  async updatePostById(
-    id: string,
-    userId: string,
-    updatePostDto: UpdatePostDto,
-  ) {
+  async updatePostById(id: string, updatePostDto: UpdatePostDto) {
     return this.dbClient.post.update({
       where: {
         id,
-        userId
       },
       data: {
         title: updatePostDto.title,
