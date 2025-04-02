@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwtService.verifyAsync(token, {
         secret: process.env.KEY,
       });
-      const isEnabled = await this.sessionService.isEnabled(token);
+      const isEnabled = await this.sessionService.isEnabled(payload.sessionId);
       if (!isEnabled) {
         throw new UnauthorizedException('Token no válido');
       }
