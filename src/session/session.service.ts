@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateSessionDto } from './dto/create-session.dto';
+import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 
 @Injectable()
 export class SessionService {
@@ -20,6 +21,15 @@ export class SessionService {
       data: {
         ...sessionDto,
       },
+    });
+  }
+  async closeAllSessions(payload:JwtPayload) {
+    return this.dbClient.session.updateMany({
+      where: {userId: payload.userId,
+        id: { not: payload.sessionId },
+        isEnabled: true,
+      },
+      data: { isEnabled: false },
     });
   }
   async updateSessionById(id: string) {
