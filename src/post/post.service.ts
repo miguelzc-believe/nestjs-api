@@ -7,15 +7,15 @@ import { PaginationPostDto } from './dto/pagination-post.dto';
 
 @Injectable()
 export class PostService {
-  constructor( private readonly dbClient : PrismaService){}
-  async createPost( user: JwtPayload, newPost:CreatePostDto){
+  constructor(private readonly dbClient: PrismaService) {}
+  async createPost(user: JwtPayload, newPost: CreatePostDto) {
     return this.dbClient.post.create({
-      data:{
+      data: {
         userId: user.userId,
         title: newPost.title,
         content: newPost.content,
-      }
-    })
+      },
+    });
   }
   async getAllPosts(paginationPostDto: PaginationPostDto) {
     return this.dbClient.post.findMany({
@@ -26,35 +26,41 @@ export class PostService {
       },
       where: {
         isDeleted: false,
-      }
-    })
+      },
+    });
   }
-  async getTotalItems(){
+  async getTotalItems() {
     return this.dbClient.post.count({
-      where:{
+      where: {
         isDeleted: false,
-      }
-    })
-  }
-  async deletePostById(id: string){
-    return this.dbClient.post.update({
-      where:{
-        id
       },
-      data:{
+    });
+  }
+  async deletePostById(id: string, userId: string) {
+    return this.dbClient.post.update({
+      where: {
+        id,
+        userId,
+      },
+      data: {
         isDeleted: true,
-      }
-    })
-  }
-  async updatePostById(id: string, updatePostDto: UpdatePostDto){
-    return this.dbClient.post.update({
-      where:{
-        id
       },
-      data:{
+    });
+  }
+  async updatePostById(
+    id: string,
+    userId: string,
+    updatePostDto: UpdatePostDto,
+  ) {
+    return this.dbClient.post.update({
+      where: {
+        id,
+        userId
+      },
+      data: {
         title: updatePostDto.title,
         content: updatePostDto.content,
-      }
-    })
+      },
+    });
   }
 }

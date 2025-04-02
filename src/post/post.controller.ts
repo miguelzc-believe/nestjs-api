@@ -43,8 +43,8 @@ export class PostController {
     };
   }
   @Delete(':id')
-  async deletePostById(@Param('id') id: string) {
-    const post = await this.postService.deletePostById(id);
+  async deletePostById(@Param('id') id: string, @CurrentUser() user: JwtPayload) {
+    const post = await this.postService.deletePostById(id, user.userId);
     return {
       message: 'Post deleted successfully',
       postId: post.id,
@@ -54,8 +54,9 @@ export class PostController {
   async updatePostById(
     @Body() updatePostDto: UpdatePostDto,
     @Param('id') id: string,
+    @CurrentUser() user: JwtPayload,
   ) {
-    await this.postService.updatePostById(id, updatePostDto);
+    await this.postService.updatePostById(id, user.userId, updatePostDto);
     return {
       message: 'Post updated successfully',
     };
