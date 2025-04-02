@@ -9,7 +9,7 @@ import { AuthGuard } from './auth.guard';
 @Module({
   imports: [
     SessionModule,
-    forwardRef(() => UserModule),
+    UserModule,
     JwtModule.register({
       global: true,
       secret: process.env.KEY,

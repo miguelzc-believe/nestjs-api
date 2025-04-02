@@ -9,7 +9,7 @@ import { SessionModule } from 'src/session/session.module';
 import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [SessionModule,PrismaModule,OtbModule,SmtpModule,forwardRef(() => AuthModule)],
+  imports: [SessionModule,PrismaModule,OtbModule,SmtpModule],
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
