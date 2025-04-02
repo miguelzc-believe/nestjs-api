@@ -15,6 +15,7 @@ import { UpdatePostDto } from './dto/update-post.dto';
 import { CurrentUser } from 'src/auth/decorators/current-user.decorator';
 import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import { PaginationPostDto } from './dto/pagination-post.dto';
+import { PostOwnerGuard } from './post.guard';
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
@@ -43,6 +44,7 @@ export class PostController {
     };
   }
   @Delete(':id')
+  @UseGuards(PostOwnerGuard)
   async deletePostById(@Param('id') id: string) {
     const post = await this.postService.deletePostById(id);
     return {
@@ -50,7 +52,9 @@ export class PostController {
       postId: post.id,
     };
   }
+
   @Patch(':id')
+  @UseGuards(PostOwnerGuard)
   async updatePostById(
     @Body() updatePostDto: UpdatePostDto,
     @Param('id') id: string,
