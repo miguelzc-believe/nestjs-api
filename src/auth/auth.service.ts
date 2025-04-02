@@ -26,22 +26,22 @@ export class AuthService {
     if (!pass) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    const sessionId = randomUUID();
-    const token = await this.jwtService.signAsync({userId: user.id, sessionId: sessionId});
+    const sessionId = randomUUID().toString();
+    const token = await this.jwtService.signAsync({
+      userId: user.id,
+      sessionId: sessionId,
+    });
     const expirationDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
-    const sessionDto = new CreateSessionDto();
-    const sessionData = {
+    await this.sessionService.createSession({
       id: sessionId,
       userId: user.id,
       token,
       isEnabled: true,
       lifetime: 3600,
       timeOut: expirationDate,
-    };
-    Object.assign(sessionDto, sessionData);
-    await this.sessionService.createSession(sessionDto);
+    });
     return {
-      access_token: "Bearer " + token,
+      access_token: 'Bearer ' + token,
     };
   }
 }

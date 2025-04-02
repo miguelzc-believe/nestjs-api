@@ -11,9 +11,10 @@ import { AuthModule } from './auth/auth.module';
 import { APP_FILTER } from '@nestjs/core';
 import { PrismaExceptionFilter } from './http-exeption.filter';
 import { SessionModule } from './session/session.module';
+import { SmtpModule } from './smtp/smtp.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, PostModule, OtbModule, AuthModule, SessionModule],
+  imports: [PrismaModule, UserModule, PostModule, OtbModule, AuthModule, SessionModule, SmtpModule],
   controllers: [AppController],
   providers: [{
     provide: APP_FILTER,
