@@ -13,9 +13,10 @@ import { PrismaExceptionFilter } from './http-exeption.filter';
 import { SessionModule } from './session/session.module';
 import { SmtpModule } from './smtp/smtp.module';
 import { AuthGuard } from './auth/auth.guard';
+import { SharedUserModule } from './shared-user/shared-user.module';
 
 @Module({
-  imports: [PrismaModule, UserModule, PostModule, OtbModule, AuthModule, SessionModule, SmtpModule],
+  imports: [PrismaModule, UserModule, PostModule, OtbModule, AuthModule, SessionModule, SmtpModule, SharedUserModule],
   controllers: [AppController],
   providers: [{
     provide: APP_GUARD,
