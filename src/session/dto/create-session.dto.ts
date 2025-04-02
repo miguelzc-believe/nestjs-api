@@ -2,7 +2,7 @@ import { IsNotEmpty } from 'class-validator';
 
 export class CreateSessionDto {
   @IsNotEmpty({ message: 'Session ID should not be empty' })
-  sessionId: string;
+  id: string;
   @IsNotEmpty({ message: 'User ID should not be empty' })
   userId: string;
   @IsNotEmpty({ message: 'Token should not be empty' })
