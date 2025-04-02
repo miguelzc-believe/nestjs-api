@@ -9,6 +9,6 @@ import { SmtpModule } from 'src/smtp/smtp.module';
   controllers: [UserController],
   providers: [UserService],
   exports: [UserService],
-  imports: [PrismaModule,OtbModule,SmtpModule],
+  imports: [PrismaModule, OtbModule, SmtpModule],
 })
 export class UserModule {}
