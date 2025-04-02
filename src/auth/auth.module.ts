@@ -5,11 +5,12 @@ import { UserModule } from 'src/user/user.module';
 import { JwtModule } from '@nestjs/jwt';
 import { SessionModule } from 'src/session/session.module';
 import { AuthGuard } from './auth.guard';
+import { SmtpModule } from 'src/smtp/smtp.module';
 
 @Module({
   imports: [
+    SmtpModule,
     SessionModule,
-    UserModule,
     JwtModule.register({
       global: true,
       secret: process.env.KEY,

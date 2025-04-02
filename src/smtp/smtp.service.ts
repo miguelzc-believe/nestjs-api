@@ -1,11 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { SendEmailDto } from './dto/send-email.dto';
 import { transporter } from './config/config.smtp';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 
 
 @Injectable()
 export class SmtpService {
+  constructor(private readonly dbClient: PrismaService) {}
+  async findUserByEmail(email: string) {
+    return this.dbClient.user.findUnique({
+      where:{
+        email
+      }
+    })
+  }
     async  sendEmail(sendEmailDto:SendEmailDto) {
         
         const info = await transporter.sendMail({

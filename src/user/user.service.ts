@@ -15,13 +15,7 @@ export class UserService {
     private readonly otbService:OtbService, 
     private readonly smtService:SmtpService,
     private readonly sessionService:SessionService) {}
-  findUserByEmail(email: string) {
-    return this.dbClient.user.findUnique({
-      where:{
-        email
-      }
-    })
-  }
+  
   async create(createUserDto: CreateUserDto) {
     const birthDate= new Date(createUserDto.birthDate);
     const encryptedPassword = await bcrypt.hash(createUserDto.password, 10);

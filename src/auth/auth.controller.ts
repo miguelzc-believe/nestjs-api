@@ -3,9 +3,6 @@ import {
   Get,
   Post,
   Body,
-  Patch,
-  Param,
-  Request,
   HttpCode,
   HttpStatus,
   UseGuards,
@@ -15,11 +12,13 @@ import { AuthGuard } from './auth.guard';
 import { SignInDto } from './dto/signInDto';
 import { CurrentUser } from './decorators/current-user.decorator';
 import { JwtPayload } from './dto/jwt-payload.dto';
+import { Public } from './decorators/public.decorator';
 
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @HttpCode(HttpStatus.OK)
   @Post('login')
   signIn(@Body() signInDto: SignInDto) {

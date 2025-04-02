@@ -8,17 +8,19 @@ import { randomUUID } from 'crypto';
 import { generateJWT } from './utils/authUtils';
 import { SessionService } from 'src/session/session.service';
 import { CreateSessionDto } from 'src/session/dto/create-session.dto';
+import { SmtpService } from 'src/smtp/smtp.service';
 const bcrypt = require('bcrypt');
 
 @Injectable()
 export class AuthService {
   constructor(
     private jwtService: JwtService,
-    private readonly userService: UserService,
+    
+    private readonly smtpService: SmtpService,
     private readonly sessionService: SessionService,
   ) {}
   async signIn(signInDto: SignInDto): Promise<{ access_token: string }> {
-    const user = await this.userService.findUserByEmail(signInDto.email);
+    const user = await this.smtpService.findUserByEmail(signInDto.email);
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
