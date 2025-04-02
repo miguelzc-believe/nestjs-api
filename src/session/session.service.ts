@@ -22,4 +22,21 @@ export class SessionService {
       },
     });
   }
+  async updateSessionById(id: string) {
+    const session = this.dbClient.session.findFirst({
+      where: {
+        id,
+      },
+    });
+    if (!session)
+      throw new NotFoundException(`Session with ID ${id} not found`);
+    return this.dbClient.session.update({
+      where: {
+        id,
+      },
+      data: {
+        isEnabled: false,
+      },
+    });
+  }
 }
