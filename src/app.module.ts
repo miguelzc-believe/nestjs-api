@@ -8,10 +8,15 @@ import { SessionService } from './session/session.service';
 import { PostModule } from './post/post.module';
 import { OtbModule } from './otb/otb.module';
 import { AuthModule } from './auth/auth.module';
+import { APP_FILTER } from '@nestjs/core';
+import { PrismaExceptionFilter } from './http-exeption.filter';
 
 @Module({
   imports: [PrismaModule, UserModule, PostModule, OtbModule, AuthModule],
   controllers: [AppController],
-  providers: [AppService, PrismaService, SessionService],
+  providers: [{
+    provide: APP_FILTER,
+    useClass: PrismaExceptionFilter,
+  },AppService, PrismaService, SessionService,],
 })
 export class AppModule {}
