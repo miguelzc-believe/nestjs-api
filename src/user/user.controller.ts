@@ -34,7 +34,7 @@ export class UserController {
   }
 
   @ApiOperation({ summary: 'Actualizar usuario' })
-  @ApiResponse({ status: 200,type:UserResponse })
+  @ApiOkResponse({ type:UserResponse })
   @Patch("/edit")
   update( @CurrentUser() user:JwtPayload, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(user.userId, updateUserDto);
