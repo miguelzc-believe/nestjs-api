@@ -1,5 +1,6 @@
 import { IsNotEmpty, IsString, Length, Matches, MaxLength, MinLength } from "class-validator";
 import { Match } from "../decorator/match.decorator";
+import { ApiProperty } from "@nestjs/swagger";
 
 export class UpdateUserPasswordDto {
 
@@ -10,10 +11,12 @@ export class UpdateUserPasswordDto {
     @Matches(/[a-z]/, { message: 'Debe contener al menos una letra minúscula' })
     @Matches(/\d/, { message: 'Debe contener al menos un número' })
     @Matches(/[!@#$%^&*(),.?":{}|<>]/, { message: 'Debe contener al menos un símbolo especial' })
+    @ApiProperty({ example: 'Contraseña123!' })
     newPassword: string;
     
     @IsString()
     @IsNotEmpty({message: 'password confirmation is required'})
     @Match('newPassword', { message: 'passwords do not match' })
+    @ApiProperty({ example: 'Contraseña123!' })
     passwordConfirm: string;
 }

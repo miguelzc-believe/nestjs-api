@@ -61,6 +61,7 @@ export class UserService {
 
   update(id: string, updateUserDto: UpdateUserDto) {
     if(updateUserDto.password || updateUserDto.passwordConfirmation) throw new BadRequestException("You cannot update the password here, please use the updatePassword method");
+    if(updateUserDto.email) throw new BadRequestException("You cannot update the email here");
     if(updateUserDto.birthDate) updateUserDto.birthDate= new Date(updateUserDto.birthDate);
     return this.dbClient.user.update({
       where: { id },
@@ -76,10 +77,11 @@ export class UserService {
         },);
   }
 
-  remove(id: string) {
-    return this.dbClient.user.delete({
+  async remove(id: string) {
+    await this.dbClient.user.delete({
       where: { id },
     });
+    return "User removed successfully";
   }
 
   async updatePassword(payload:JwtPayload,updateUserPasswordDto:UpdateUserPasswordDto) {
