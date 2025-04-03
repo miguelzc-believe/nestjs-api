@@ -11,7 +11,6 @@ export class CreateUserDto {
   firstName: string;
 
   @IsString({ message: 'El apellido debe ser una cadena' })
-  @IsNotEmpty({ message: 'El apellido no puede ir vacío' })
   @MaxLength(100, { message: 'El apellido no puede tener más de 100 caracteres' })
   @ApiProperty({ example: 'Pérez' })
   lastName: string;
