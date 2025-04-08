@@ -26,6 +26,7 @@ model User {
   otbs      Otb[]
   sessions  Session[]
   posts     Post[]
+  comments  Comment[]
 }
 
 model Otb {
@@ -48,12 +49,25 @@ model Session {
 }
 
 model Post {
-  id        String   @id @default(uuid())
+  id        String    @id @default(uuid())
   userId    String
-  userPost  User     @relation(fields: [userId], references: [id])
-  title     String   @db.VarChar(80)
-  content   String   @db.Text
-  isDeleted Boolean  @default(false)
-  createdAt DateTime @default(now()) @db.Timestamp(6)
-  updatedAt DateTime @updatedAt @db.Timestamp(6)
+  userPost  User      @relation(fields: [userId], references: [id])
+  title     String    @db.VarChar(80)
+  content   String    @db.Text
+  isDeleted Boolean   @default(false)
+  createdAt DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt DateTime  @updatedAt @db.Timestamp(6)
+  comments  Comment[]
+}
+
+model Comment {
+  id          String   @id @default(uuid())
+  userId      String
+  userComment User     @relation(fields: [userId], references: [id])
+  postId      String
+  postComment Post     @relation(fields: [postId], references: [id])
+  content     String   @db.Text
+  isDeleted   Boolean  @default(false)
+  createdAt   DateTime @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime @updatedAt @db.Timestamp(6)
 }
