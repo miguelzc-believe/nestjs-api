@@ -14,9 +14,13 @@ import { SessionModule } from './session/session.module';
 import { SmtpModule } from './smtp/smtp.module';
 import { AuthGuard } from './auth/auth.guard';
 import { SharedUserModule } from './shared-user/shared-user.module';
+import { CommentGateway } from './comment/comment.gateway';
+import { CommentModule } from './comment/comment.module';
+import { LikeModule } from './like/like.module';
+import { LikeGateway } from './like/like.gateway';
 
 @Module({
-  imports: [PrismaModule, UserModule, PostModule, OtbModule, AuthModule, SessionModule, SmtpModule, SharedUserModule],
+  imports: [PrismaModule, UserModule, PostModule, OtbModule, AuthModule, SessionModule, SmtpModule, SharedUserModule,  CommentModule, LikeModule],
   controllers: [AppController],
   providers: [{
     provide: APP_GUARD,
@@ -24,6 +28,6 @@ import { SharedUserModule } from './shared-user/shared-user.module';
   },{
     provide: APP_FILTER,
     useClass: PrismaExceptionFilter,
-  },AppService, PrismaService, SessionService,],
+  },AppService, PrismaService, SessionService, CommentGateway, LikeGateway],
 })
 export class AppModule {}
