@@ -1,4 +1,5 @@
 import {
+  ConnectedSocket,
   MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
@@ -7,22 +8,72 @@ import {
   WebSocketServer,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
+import { CreateCommentDto } from './dto/create-comment.dto';
+import { CommentService } from './comment.service';
+import { UpdateCommentDto } from './dto/update-comment.dto';
+import { JwtService } from '@nestjs/jwt';
 
 @WebSocketGateway()
 export class CommentGateway
   implements OnGatewayConnection, OnGatewayDisconnect
 {
+  constructor(
+    private readonly commentService: CommentService,
+    private jwtService: JwtService,
+  ) {}
   @WebSocketServer()
   server: Server;
   handleConnection(client: Socket) {
-    console.log(`Client connected: ${client.id}`);
+    const token = client.handshake.headers['token'] as string;
+    try {
+      const payload = this.jwtService.verify(token);
+      client.data.userId = payload.userId;
+      console.log(
+        `Client connected for comment: ${client.id} as ${payload.userId}`,
+      );
+    } catch (error) {
+      console.log('Token inválido');
+      client.disconnect();
+    }
   }
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected:' ${client.id}`);
   }
   @SubscribeMessage('comment')
-  handleMessage(@MessageBody() data: string){
-    console.log(data)
-    this.server.emit('comment', 'comentario recibido desde el servidor');
+  async handleMessage(
+    @MessageBody() createCommentDto: CreateCommentDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.userId;
+    const comment = await this.commentService.createComment(
+      createCommentDto,
+      userId,
+    );
+    client.broadcast.emit('comment-listen', comment);
+  }
+  @SubscribeMessage('comment-edit')
+  async handleEdit(
+    @MessageBody() updateCommentDto: UpdateCommentDto,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.userId;
+    const comment = await this.commentService.updateCommentById(
+      updateCommentDto,
+      userId,
+    );
+    client.broadcast.emit('comment-listen', comment);
+  }
+  @SubscribeMessage('comment-delete')
+  async handleDelete(
+    @MessageBody() payload: any,
+    @ConnectedSocket() client: Socket,
+  ) {
+    const userId = client.data.userId;
+    const { commentId } = payload;
+    const comment = await this.commentService.deleteCommentById(
+      commentId,
+      userId,
+    );
+    client.broadcast.emit('comment-listen', comment);
   }
 }
