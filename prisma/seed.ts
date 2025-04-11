@@ -10,8 +10,8 @@ const prisma = new PrismaClient();
 async function generateDate()
 {
     const password=await bcrypt.hash("Password@123",10);
-    
-    for(let i=0;i<1000; i++)
+    console.time("Semilla")
+    for(let i=0;i<10; i++)
     {
         const firstName=faker.person.firstName();
         const lastName=faker.person.lastName();
@@ -24,10 +24,18 @@ async function generateDate()
                 email,
                 password,
                 birthDate,
-                state: true   
+                state: true,
+                // posts:{
+                //     create:
+                //     {
+                //         title: faker.lorem.sentence({min:1,max:3}),
+                //         content: faker.lorem.paragraphs({min:10,max:200}),
+                //         isDeleted: false
+                //     }
+                // }   
             },}
         );
-        for (let k = 0; k < 100; k++) {
+        for (let k = 0; k < 1; k++) {
             await prisma.post.create({
               data: {
                 userId: u.id,
@@ -39,6 +47,8 @@ async function generateDate()
         }
 
     }
+    console.timeEnd("Semilla")
+
 }
 
 async function generar()
