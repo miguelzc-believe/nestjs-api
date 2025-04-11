@@ -92,4 +92,6 @@ model Like {
   reaction  ReactionType @default(LIKE)
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime  @updatedAt @db.Timestamp(6)
+
+  @@unique([userId, postId])
 }
