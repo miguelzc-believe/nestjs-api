@@ -74,12 +74,22 @@ model Comment {
   updatedAt   DateTime @updatedAt @db.Timestamp(6)
 }
 
+enum ReactionType {
+  LIKE
+  LOVE
+  HAHA
+  WOW
+  SAD
+  ANGRY
+}
+
 model Like {
   id        String    @id @default(uuid())
   userId    String
   userLike  User      @relation(fields: [userId], references: [id])
   postId    String
   postLike  Post      @relation(fields: [postId], references: [id])
+  reaction  ReactionType @default(LIKE)
   createdAt DateTime  @default(now()) @db.Timestamp(6)
   updatedAt DateTime  @updatedAt @db.Timestamp(6)
 }
