@@ -7,10 +7,10 @@ import { UpdateLikeDto } from './dto/update-like.dto';
 export class LikeService {
   constructor(private readonly dbClient: PrismaService) {}
 
-  createLike(likeDto: CreateLikeDto,userId:string) {
+  async createLike(likeDto: CreateLikeDto,userId:string) {
     console.log(likeDto)
     console.log(userId)
-    return this.dbClient.like.create({
+    return await this.dbClient.like.create({
       data: {
         postId:likeDto.postId,
         reaction:likeDto.reaction,
@@ -26,8 +26,8 @@ export class LikeService {
         }
     })
   }
-  updateReaction(updateLikeDto: UpdateLikeDto) {
-    return this.dbClient.like.update({
+  async updateReaction(updateLikeDto: UpdateLikeDto) {
+    return await this.dbClient.like.update({
       where: {
         id: updateLikeDto.likeId,
       },
@@ -67,8 +67,8 @@ export class LikeService {
     return reactionsTotals;
   }
 
-  deleteLike(likeId: string) {
-    return this.dbClient.like.delete({
+  async deleteLike(likeId: string) {
+    return await this.dbClient.like.delete({
       where: {
         id: likeId,
       },
