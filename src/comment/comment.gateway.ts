@@ -39,6 +39,16 @@ export class CommentGateway
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected:' ${client.id}`);
   }
+
+  emitNewComment(comment: CreateCommentDto) {
+    this.server.emit(`Post-${comment.postId}`, comment);
+  }
+
+  emitComment (comment: UpdateCommentDto, commentId: string){
+    this.server.emit(`Comment-${commentId}`, comment)
+  }
+
+  // Otra Lógica para manejo de sockets
   @SubscribeMessage('comment')
   async handleMessage(
     @MessageBody() createCommentDto: CreateCommentDto,
@@ -57,9 +67,11 @@ export class CommentGateway
     @ConnectedSocket() client: Socket,
   ) {
     const userId = client.data.userId;
+    const commentId = client.data.commentId; // dato inventado
     const comment = await this.commentService.updateCommentById(
       updateCommentDto,
       userId,
+      commentId
     );
     client.broadcast.emit('comment-listen', comment);
   }
