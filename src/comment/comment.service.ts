@@ -34,9 +34,13 @@ export class CommentService {
       },
     });
   }
-  async updateCommentById(updateCommentDto: UpdateCommentDto, userId: string) {
+  async updateCommentById(
+    updateCommentDto: UpdateCommentDto,
+    userId: string,
+    commentId: string,
+  ) {
     return await this.dbClient.comment.update({
-      where: { id: updateCommentDto.commentId, userId },
+      where: { id: commentId, userId },
       data: {
         content: updateCommentDto.content,
       },
