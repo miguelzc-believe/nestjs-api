@@ -7,10 +7,7 @@ import { UpdateLikeDto } from './dto/update-like.dto';
 export class LikeService {
   constructor(private readonly dbClient: PrismaService) {}
 
-  async createLike(likeDto: CreateLikeDto,userId:string) {
-    console.log(likeDto)
-    console.log(userId)
-    return await this.dbClient.like.create({
+  async createLike(likeDto: CreateLikeDto,userId:string) {    return await this.dbClient.like.create({
       data: {
         postId:likeDto.postId,
         reaction:likeDto.reaction,

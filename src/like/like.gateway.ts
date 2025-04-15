@@ -12,7 +12,11 @@ import { Server, Socket } from 'socket.io';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
+import { UseFilters } from '@nestjs/common';
+import { PrismaWsExceptionFilter } from 'src/web-socket.filter';
+import { Like } from '@prisma/client';
 
+@UseFilters(PrismaWsExceptionFilter)
 @WebSocketGateway()
 export class LikeGateway
   implements OnGatewayConnection, OnGatewayDisconnect
@@ -37,6 +41,22 @@ export class LikeGateway
 
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
+  }
+
+  emitNewLike(createdLike:Like,idLike:string)
+  {
+    this.server.emit(`reaction-${createdLike.postId}`, {
+      postId: createdLike.postId,
+      idLike:idLike,
+      reaction:createdLike.reaction
+    });
+  }
+
+  emitAllReactions(reactions:any,postId:string)
+  {
+    this.server.emit(`reactions-${postId}`, {
+      postId: postId,reactions
+    });
   }
 
   @SubscribeMessage('like-create')
