@@ -6,7 +6,9 @@ import { JwtPayload } from 'src/auth/dto/jwt-payload.dto';
 import { CreateCommentDto } from './dto/create-comment.dto';
 import { CommentGateway } from './comment.gateway';
 import { UpdateCommentDto } from './dto/update-comment.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Comment')
 @Controller('comment')
 export class CommentController {
   constructor(

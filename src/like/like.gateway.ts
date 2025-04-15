@@ -12,7 +12,11 @@ import { Server, Socket } from 'socket.io';
 import { LikeService } from './like.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
+import { UseFilters } from '@nestjs/common';
+import { PrismaWsExceptionFilter } from 'src/web-socket.filter';
+import { Like } from '@prisma/client';
 
+@UseFilters(PrismaWsExceptionFilter)
 @WebSocketGateway()
 export class LikeGateway
   implements OnGatewayConnection, OnGatewayDisconnect
@@ -39,6 +43,22 @@ export class LikeGateway
     console.log(`Client disconnected: ${client.id}`);
   }
 
+  emitNewLike(createdLike:Like,idLike:string)
+  {
+    this.server.emit(`reaction-${createdLike.postId}`, {
+      postId: createdLike.postId,
+      idLike:idLike,
+      reaction:createdLike.reaction
+    });
+  }
+
+  emitAllReactions(reactions:any,postId:string)
+  {
+    this.server.emit(`reactions-${postId}`, {
+      postId: postId,reactions
+    });
+  }
+
   @SubscribeMessage('like-create')
   async handleCreateLike(
     @ConnectedSocket() client: Socket,
@@ -59,7 +79,7 @@ export class LikeGateway
     @ConnectedSocket() client: Socket,
     @MessageBody()  updateLikeDto: UpdateLikeDto ,
   ) {
-    const updatedLike = await this.likeService.updateReaction(updateLikeDto);
+    const updatedLike = await this.likeService.updateReaction(updateLikeDto,client.data.userId);
     client.broadcast.emit('like-updated', updatedLike);
     this.server.emit(`reactionUpdated-${updatedLike.postId}`, {
       postId: updatedLike.postId,
@@ -93,7 +113,7 @@ export class LikeGateway
       return;
     }
 
-    const deletedLike = await this.likeService.deleteLike(data.likeId);
+    const deletedLike = await this.likeService.deleteLike(data.likeId,client.data.userId);
     client.broadcast.emit('like-deleted', deletedLike);
     this.server.emit(`reactionUpdated-${data.postId}`, {
       postId: data.postId,message:"like-deleted"
