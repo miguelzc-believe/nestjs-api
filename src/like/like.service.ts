@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
+import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
+import { error } from 'console';
 
 @Injectable()
 export class LikeService {
@@ -23,10 +25,11 @@ export class LikeService {
         }
     })
   }
-  async updateReaction(updateLikeDto: UpdateLikeDto) {
+  async updateReaction(updateLikeDto: UpdateLikeDto,userId:string) {
     return await this.dbClient.like.update({
       where: {
         id: updateLikeDto.likeId,
+        userId
       },
       data: {
         reaction: updateLikeDto.reaction,
@@ -44,6 +47,10 @@ export class LikeService {
         reaction: true,
       },
     });
+    if(groupedReactions.length===0)
+    {
+      throw new HttpException('Reaction not found',HttpStatus.NOT_FOUND)
+    }
     const reactionsTotals = {
       total: 0,
       LIKE: 0,
@@ -64,10 +71,11 @@ export class LikeService {
     return reactionsTotals;
   }
 
-  async deleteLike(likeId: string) {
+  async deleteLike(likeId: string,userId:string) {
     return await this.dbClient.like.delete({
       where: {
         id: likeId,
+        userId
       },
     });
   }

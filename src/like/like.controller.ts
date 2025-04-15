@@ -6,7 +6,11 @@ import { JwtPayload } from "src/auth/dto/jwt-payload.dto";
 import { CreateLikeDto } from "./dto/create-like.dto";
 import { UpdateLikeDto } from "./dto/update-like.dto";
 import { PrismaWsExceptionFilter } from "src/web-socket.filter";
+import { ApiTags } from "@nestjs/swagger";
+import { Public } from "src/auth/decorators/public.decorator";
 
+
+@ApiTags('Like')
 @Controller('like')
 export class LikeController{
 
@@ -37,26 +41,17 @@ export class LikeController{
     )
     {
         const {userId}=user
-        if(!userId)
-        {
-            return {success: false, message:'Unauthorized', status:HttpStatus.UNAUTHORIZED}
-        }
-        const updatedLike= await this.likeService.updateReaction(updateLike);
+        const updatedLike= await this.likeService.updateReaction(updateLike,userId);
         this.likeGateway.emitNewLike(updatedLike,updatedLike.id);
         return {sucess: true, message: 'Reaccion actualizada',updatedLike}
     }
 
+    @Public()
     @Get('getReactions/:idPost')
     async getReactions(
-        @CurrentUser() user: JwtPayload,
         @Param() data:{idPost:string}
     )
     {
-        const {userId}=user;
-        if(!userId)
-        {
-            return {success: false, message:'Unauthorized', status:HttpStatus.UNAUTHORIZED}
-        }
         const reactions= await this.likeService.getAllReactionsPost(data.idPost);
         this.likeGateway.emitAllReactions(reactions,data.idPost);
         return {success: true, reactions}
@@ -68,7 +63,8 @@ export class LikeController{
         @Param() data:{likeId:string}
     )
     {
-        await this.likeService.deleteLike(data.likeId);
+        const {userId}= user
+        await this.likeService.deleteLike(data.likeId,userId);
         return {success: true, message:"Reaccion eliminada"}
     }
 }

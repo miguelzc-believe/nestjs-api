@@ -79,7 +79,7 @@ export class LikeGateway
     @ConnectedSocket() client: Socket,
     @MessageBody()  updateLikeDto: UpdateLikeDto ,
   ) {
-    const updatedLike = await this.likeService.updateReaction(updateLikeDto);
+    const updatedLike = await this.likeService.updateReaction(updateLikeDto,client.data.userId);
     client.broadcast.emit('like-updated', updatedLike);
     this.server.emit(`reactionUpdated-${updatedLike.postId}`, {
       postId: updatedLike.postId,
@@ -113,7 +113,7 @@ export class LikeGateway
       return;
     }
 
-    const deletedLike = await this.likeService.deleteLike(data.likeId);
+    const deletedLike = await this.likeService.deleteLike(data.likeId,client.data.userId);
     client.broadcast.emit('like-deleted', deletedLike);
     this.server.emit(`reactionUpdated-${data.postId}`, {
       postId: data.postId,message:"like-deleted"
