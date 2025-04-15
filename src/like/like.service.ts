@@ -1,9 +1,7 @@
-import { HttpCode, HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateLikeDto } from './dto/create-like.dto';
 import { UpdateLikeDto } from './dto/update-like.dto';
-import { HttpErrorByCode } from '@nestjs/common/utils/http-error-by-code.util';
-import { error } from 'console';
 
 @Injectable()
 export class LikeService {

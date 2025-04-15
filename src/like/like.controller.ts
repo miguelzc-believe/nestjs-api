@@ -5,7 +5,6 @@ import { CurrentUser } from "src/auth/decorators/current-user.decorator";
 import { JwtPayload } from "src/auth/dto/jwt-payload.dto";
 import { CreateLikeDto } from "./dto/create-like.dto";
 import { UpdateLikeDto } from "./dto/update-like.dto";
-import { PrismaWsExceptionFilter } from "src/web-socket.filter";
 import { ApiTags } from "@nestjs/swagger";
 import { Public } from "src/auth/decorators/public.decorator";
 
